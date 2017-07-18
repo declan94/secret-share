@@ -10,12 +10,10 @@ import (
 
 const shareBytesOverhead = md5.Size + 1
 
-// ShareBytes create secret-share parts for bytes array
-// 	data: data to create shares
-//  n: count of sharing parts
-//  k: least count of sharing parts to recover origin data
-// 	The part id and md5 hash of the original data will be append after the data before creating sharing parts
-// 	Use RecoverBytes to recover and verify origin data from sharing parts
+// ShareBytes create secret-share parts for bytes array. The part id and md5 hash of the original data will be append after the data before creating sharing parts. Use RecoverBytes to recover and verify origin data from sharing parts
+// data: data to create shares
+// n: count of sharing parts
+// k: least count of sharing parts to recover origin data
 func ShareBytes(data []byte, n, k byte) ([][]byte, error) {
 	hash := md5.Sum(data)
 	hashedData := append(data, hash[:]...)
