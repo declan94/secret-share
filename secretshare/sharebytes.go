@@ -8,14 +8,15 @@ import (
 	"github.com/codahale/sss"
 )
 
-const shareBytesOverhead = md5.Size + 1
+// ShareBytesOverhead is the length overhead of sharing parts compared to the original data.
+// i.e. the length of each sharing part = the length of original data + ShareBytesOverhead
+const ShareBytesOverhead = md5.Size + 1
 
 // ShareBytes create sharing parts for bytes array.
-// The part id and md5 hash of the original data will be append after the data before creating sharing parts.
+//
+// First append md5 hash after `data` for later validation when recovering,
+// then create `n` sharing parts, at least `k` parts are needed for recovering.
 // Use RecoverBytes to recover and verify origin data from sharing parts
-//  data: data to create shares
-//  n: count of sharing parts
-//  k: least count of sharing parts to recover origin data
 func ShareBytes(data []byte, n, k byte) ([][]byte, error) {
 	hash := md5.Sum(data)
 	hashedData := append(data, hash[:]...)
@@ -32,7 +33,8 @@ func ShareBytes(data []byte, n, k byte) ([][]byte, error) {
 	return results, nil
 }
 
-// RecoverBytes recover bytes array from sharing parts
+// RecoverBytes recover bytes array from sharing parts.
+// Validate using the pre-appended hash in ShareBytes
 func RecoverBytes(shares [][]byte) ([]byte, error) {
 	shareMap := make(map[byte][]byte)
 	for _, share := range shares {

@@ -6,10 +6,9 @@ import (
 	"os"
 )
 
-// ShareFile create sharing parts of file
-//  src: path to source directory
-//  dsts: paths to out sharing parts
-//  k: least count of sharing parts to recover origin data
+// ShareFile create sharing parts of file `src`, save them in paths `dsts`,
+// at least `k` sharing parts are needed for recovering.
+// Use RecoverFile to recover the file form sharing parts.
 func ShareFile(src string, dsts []string, k byte) error {
 	fmt.Printf("Create sharing parts for [%s] \n", src)
 	header := newShareFileHeader()
@@ -72,9 +71,7 @@ func ShareFile(src string, dsts []string, k byte) error {
 	return nil
 }
 
-// RecoverFile recover file from sharing parts
-//  srcs: paths of sharing parts
-//  dst: path to output recovered file
+// RecoverFile recover file from sharing parts in paths `srcs` and save it to `dst`
 func RecoverFile(dst string, srcs []string) error {
 	fmt.Printf("Recover [%s] \n", dst)
 	var err error
@@ -110,7 +107,7 @@ func RecoverFile(dst string, srcs []string) error {
 		return fmt.Errorf("Stat part file [%s] failed: %v", srcs[0], err)
 	}
 	mode := finfo.Mode()
-	blkCnt := (finfo.Size()-1)/int64(header.blockSize+shareBytesOverhead) + 1
+	blkCnt := (finfo.Size()-1)/int64(header.blockSize+ShareBytesOverhead) + 1
 	fd, err := os.OpenFile(dst, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, mode)
 	defer fd.Close()
 	if err != nil {
@@ -119,7 +116,7 @@ func RecoverFile(dst string, srcs []string) error {
 	// Read blocks and Recover
 	pblocks := make([][]byte, len(srcs))
 	for i := range pblocks {
-		pblocks[i] = make([]byte, header.blockSize+shareBytesOverhead)
+		pblocks[i] = make([]byte, header.blockSize+ShareBytesOverhead)
 	}
 	blkNo := 0
 	var rdErr error
@@ -129,7 +126,7 @@ func RecoverFile(dst string, srcs []string) error {
 		fmt.Printf("\x08\x08\x08\x08%3d%%", int64(blkNo*100)/blkCnt)
 		var n0, n int
 		for i, pfd := range pfds {
-			pblocks[i] = pblocks[i][:header.blockSize+shareBytesOverhead]
+			pblocks[i] = pblocks[i][:header.blockSize+ShareBytesOverhead]
 			n, rdErr = pfd.Read(pblocks[i])
 			if rdErr != nil && rdErr != io.EOF {
 				return fmt.Errorf("Read part file [%s] failed: %v", srcs[i], err)
