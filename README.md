@@ -15,7 +15,8 @@ and recover from some of the parts (not less then the given param ```k```)
 ## Install
 
 #### Install from source
-You have to install go tools first, see [here](https://golang.org/doc/install#install)
+You have to install go tools first, see [here](https://golang.org/doc/install#install).
+
 After that, execute commands below:
 ```
 $ go get -u github.com/declan94/secret-share
