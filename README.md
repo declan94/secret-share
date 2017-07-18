@@ -14,7 +14,7 @@ and recover from some of the parts (not less then the given param ```k```)
 
 ## Install
 
-#### Install from source
+#### Install from source code
 You have to install go tools first, see [here](https://golang.org/doc/install#install).
 
 After that, execute commands below:
@@ -24,7 +24,7 @@ $ sudo cp `go env GOPATH`/bin/secret-share /usr/local/bin
 ```
 
 #### Install from tarball
-For macos or linux, you can download [Release Tarball](https://github.com/declan94/secret-share/releases), unzip it then directly use the binary program.
+For macos or linux, you can download [Release Tarball](https://github.com/declan94/secret-share/releases), unzip it then directly use the pre-built binary program.
 
 ## Usage
 
