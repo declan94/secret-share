@@ -7,6 +7,9 @@ import (
 )
 
 // ShareFile create sharing parts of file
+//  src: path to source directory
+//  dsts: paths to out sharing parts
+//  k: least count of sharing parts to recover origin data
 func ShareFile(src string, dsts []string, k byte) error {
 	fmt.Printf("Create sharing parts for [%s] \n", src)
 	header := newShareFileHeader()
@@ -70,6 +73,8 @@ func ShareFile(src string, dsts []string, k byte) error {
 }
 
 // RecoverFile recover file from sharing parts
+//  srcs: paths of sharing parts
+//  dst: path to output recovered file
 func RecoverFile(dst string, srcs []string) error {
 	fmt.Printf("Recover [%s] \n", dst)
 	var err error

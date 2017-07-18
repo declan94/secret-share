@@ -10,7 +10,10 @@ import (
 	"github.com/declan94/secret-share/internal/tlog"
 )
 
-// ShareDirectory create sharing parts of a directory
+// ShareDirectory create sharing parts for a directory
+//  src: path to source directory
+//  dsts: paths to out sharing parts
+//  k: least count of sharing parts to recover origin data
 func ShareDirectory(src string, dsts []string, k byte) error {
 	files, err := ioutil.ReadDir(src)
 	if err != nil {
@@ -40,7 +43,9 @@ func ShareDirectory(src string, dsts []string, k byte) error {
 	return nil
 }
 
-// RecoverDirectory recover original dir from sharing parts
+// RecoverDirectory recover directory from sharing parts
+//  srcs: paths of sharing parts
+//  dst: path to output recovered directory
 func RecoverDirectory(dst string, srcs []string) error {
 	src := srcs[0]
 	files, err := ioutil.ReadDir(src)
