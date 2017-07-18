@@ -8,6 +8,8 @@ import (
 	"github.com/codahale/sss"
 )
 
+const shareBytesOverhead = md5.Size + 1
+
 // ShareBytes share bytes to n parts
 func ShareBytes(data []byte, n, k byte) ([][]byte, error) {
 	hash := md5.Sum(data)
