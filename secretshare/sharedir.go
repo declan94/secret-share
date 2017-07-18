@@ -10,7 +10,7 @@ import (
 	"github.com/declan94/secret-share/internal/tlog"
 )
 
-// ShareDirectory create share parts of a directory
+// ShareDirectory create sharing parts of a directory
 func ShareDirectory(src string, dsts []string, k byte) error {
 	files, err := ioutil.ReadDir(src)
 	if err != nil {

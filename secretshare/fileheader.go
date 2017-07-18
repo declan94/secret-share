@@ -1,3 +1,7 @@
+// Package secretshare implements Shamir secret sharing for files and directories.
+// Shamir's scheme allows to split a secret value into multiple parts, so called shares, by evaluating a secret sharing polynomial at certain indices.
+// The shared secret can only be reconstructed (via Lagrange interpolation) if a threshold of the participants provide their shares.
+// This package provides functions to easily create secret shares for a file/directory, recover and validate secret file/directory from shares.
 package secretshare
 
 import (
@@ -8,6 +12,7 @@ import (
 )
 
 const (
+	// CurVersion stores in sharing files' head, used for checking format
 	CurVersion       = 0
 	defaultBlockSize = 16 * 1024
 	versionLen       = 4

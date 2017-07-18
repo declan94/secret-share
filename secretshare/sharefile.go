@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-// ShareFile create share parts of file with path "src"
+// ShareFile create sharing parts of file
 func ShareFile(src string, dsts []string, k byte) error {
 	fmt.Printf("Create sharing parts for [%s] \n", src)
 	header := newShareFileHeader()
@@ -69,7 +69,7 @@ func ShareFile(src string, dsts []string, k byte) error {
 	return nil
 }
 
-// RecoverFile recover file by sharing parts
+// RecoverFile recover file from sharing parts
 func RecoverFile(dst string, srcs []string) error {
 	fmt.Printf("Recover [%s] \n", dst)
 	var err error
