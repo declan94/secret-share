@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	curVersion       = 0
+	CurVersion       = 0
 	defaultBlockSize = 16 * 1024
 	versionLen       = 4
 	blockSizeLen     = 4
@@ -26,7 +26,7 @@ type shareFileHeader struct {
 
 func newShareFileHeader() *shareFileHeader {
 	var hd shareFileHeader
-	hd.version = curVersion
+	hd.version = CurVersion
 	hd.blockSize = defaultBlockSize
 	io.ReadFull(rand.Reader, hd.fileID[:])
 	return &hd

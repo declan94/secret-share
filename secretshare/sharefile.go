@@ -90,8 +90,8 @@ func RecoverFile(dst string, srcs []string) error {
 		tmpHeader.unsearialize(hdData)
 		if i == 0 {
 			header = tmpHeader
-			if header.version != curVersion {
-				return fmt.Errorf("Part file [%s] version not matched. want: %d, get: %d", src, curVersion, header.version)
+			if header.version != CurVersion {
+				return fmt.Errorf("Part file [%s] version not matched. want: %d, get: %d", src, CurVersion, header.version)
 			}
 		} else if !header.equal(&tmpHeader) {
 			return fmt.Errorf("Part file [%s] header not matched", src)

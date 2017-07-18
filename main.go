@@ -1,14 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/declan94/secret-share/internal/tlog"
 	"github.com/declan94/secret-share/secretshare"
 )
 
+// ReleaseVersion Release version string
+const ReleaseVersion = "v0.1"
+
 func main() {
 	args := ParseArgs()
+	if args.Version {
+		printVersion()
+		return
+	}
 	var err error
 	if args.Recover {
 		if args.Directory {
@@ -19,13 +27,17 @@ func main() {
 
 	} else {
 		if args.Directory {
-			err = secretshare.ShareDirectory(args.Src, args.Parts, byte(args.K))
+			err = secretshare.ShareDirectory(args.Src, args.Parts, byte(args.KNum))
 		} else {
-			err = secretshare.ShareFile(args.Src, args.Parts, byte(args.K))
+			err = secretshare.ShareFile(args.Src, args.Parts, byte(args.KNum))
 		}
 	}
 	if err != nil {
 		tlog.Fatal.Println(err)
 		os.Exit(3)
 	}
+}
+
+func printVersion() {
+	fmt.Printf("secret-share %s; share parts format version: %d.\n", ReleaseVersion, secretshare.CurVersion)
 }

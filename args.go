@@ -21,7 +21,8 @@ type CliArgs struct {
 	Parts     []string
 	Recover   bool
 	Directory bool
-	K         int
+	KNum      int
+	Version   bool
 }
 
 func printMyFlagSet(avoid map[string]bool) {
@@ -53,13 +54,18 @@ func ParseArgs() (args CliArgs) {
 	var debug bool
 	flagSet = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	flagSet.BoolVar(&args.Recover, "r", false, "Recover mode, recover dst file(directory) from sharing parts.")
-	flagSet.IntVar(&args.K, "k", 0, "Sufficent count for recovering. Default all sharing parts are needed.")
+	flagSet.IntVar(&args.KNum, "k", 0, "Sufficent count for recovering. Default all sharing parts are needed.")
+	flagSet.BoolVar(&args.Version, "v", false, "Show version info.")
 	flagSet.BoolVar(&debug, "debug", false, "Log out debug info.")
 
 	flagSet.Usage = usage
 	flagSet.Parse(os.Args[1:])
 
 	tlog.Debug.Enabled = debug
+
+	if args.Version {
+		return args
+	}
 
 	if flagSet.NArg() < 3 {
 		usage()
@@ -101,9 +107,9 @@ func ParseArgs() (args CliArgs) {
 			tlog.Fatal.Printf("the number of sharing parts should satisfy 2 <= n <= 255.")
 			os.Exit(1)
 		}
-		if args.K == 0 {
-			args.K = len(args.Parts)
-		} else if args.K < 2 || args.K > len(args.Parts) {
+		if args.KNum == 0 {
+			args.KNum = len(args.Parts)
+		} else if args.KNum < 2 || args.KNum > len(args.Parts) {
 			tlog.Fatal.Printf("k should satisfy 2 <= k <= n. (n is the count of total sharing parts)")
 			os.Exit(1)
 		}
