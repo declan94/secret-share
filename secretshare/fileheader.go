@@ -12,13 +12,15 @@ const (
 	defaultBlockSize = 16 * 1024
 	versionLen       = 4
 	blockSizeLen     = 4
-	fileIDLen        = 12
+	knumLen          = 1
+	fileIDLen        = 11
 	headerLen        = versionLen + blockSizeLen + fileIDLen
 )
 
 type shareFileHeader struct {
 	version   uint32
 	blockSize uint32
+	knum      uint8
 	fileID    [fileIDLen]byte
 }
 
@@ -34,14 +36,16 @@ func (hd *shareFileHeader) searialize() []byte {
 	data := make([]byte, headerLen)
 	binary.BigEndian.PutUint32(data, hd.version)
 	binary.BigEndian.PutUint32(data[versionLen:], hd.blockSize)
-	copy(data[versionLen+blockSizeLen:], hd.fileID[:])
+	data[versionLen+blockSizeLen] = hd.knum
+	copy(data[versionLen+blockSizeLen+knumLen:], hd.fileID[:])
 	return data
 }
 
 func (hd *shareFileHeader) unsearialize(data []byte) {
 	hd.version = binary.BigEndian.Uint32(data[:versionLen])
 	hd.blockSize = binary.BigEndian.Uint32(data[versionLen : versionLen+blockSizeLen])
-	copy(hd.fileID[:], data[versionLen+blockSizeLen:])
+	hd.knum = data[versionLen+blockSizeLen]
+	copy(hd.fileID[:], data[versionLen+blockSizeLen+knumLen:])
 }
 
 func (hd *shareFileHeader) equal(hd2 *shareFileHeader) bool {

@@ -10,6 +10,7 @@ import (
 func ShareFile(src string, dsts []string, k byte) error {
 	fmt.Printf("Create sharing parts for [%s] \n", src)
 	header := newShareFileHeader()
+	header.knum = k
 	hdBytes := header.searialize()
 	// Open src file, check mode
 	fd, err := os.Open(src)
@@ -42,6 +43,7 @@ func ShareFile(src string, dsts []string, k byte) error {
 	blkNo := 0
 	var rdErr error
 	fmt.Print("  0%")
+	defer fmt.Print("\x08\x08\x08\x08")
 	for rdErr == nil {
 		fmt.Printf("\x08\x08\x08\x08%3d%%", int64(blkNo*100)/blkCnt)
 		var n int
@@ -64,7 +66,6 @@ func ShareFile(src string, dsts []string, k byte) error {
 		}
 		blkNo++
 	}
-	fmt.Print("\x08\x08\x08\x08")
 	return nil
 }
 
@@ -96,6 +97,9 @@ func RecoverFile(dst string, srcs []string) error {
 			return fmt.Errorf("Part file [%s] header not matched", src)
 		}
 	}
+	if len(srcs) < int(header.knum) {
+		return fmt.Errorf("Not enough parts, given: %d, need: %d", len(srcs), header.knum)
+	}
 	finfo, err := os.Stat(srcs[0])
 	if err != nil {
 		return fmt.Errorf("Stat part file [%s] failed: %v", srcs[0], err)
@@ -115,6 +119,7 @@ func RecoverFile(dst string, srcs []string) error {
 	blkNo := 0
 	var rdErr error
 	fmt.Print("  0%")
+	defer fmt.Print("\x08\x08\x08\x08")
 	for rdErr == nil {
 		fmt.Printf("\x08\x08\x08\x08%3d%%", int64(blkNo*100)/blkCnt)
 		var n0, n int
@@ -143,6 +148,5 @@ func RecoverFile(dst string, srcs []string) error {
 		}
 		blkNo++
 	}
-	fmt.Print("\x08\x08\x08\x08")
 	return nil
 }
