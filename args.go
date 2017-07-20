@@ -113,6 +113,9 @@ func ParseArgs() (args CliArgs) {
 			tlog.Fatal.Printf("k should satisfy 2 <= k <= n. (n is the count of total sharing parts)")
 			os.Exit(1)
 		}
+		if err != nil {
+			tlog.Fatal.Printf("Stat source file failed: %v", err)
+		}
 		if info.IsDir() {
 			args.Directory = true
 			for _, d := range args.Parts {
