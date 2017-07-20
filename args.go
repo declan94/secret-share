@@ -115,6 +115,7 @@ func ParseArgs() (args CliArgs) {
 		}
 		if err != nil {
 			tlog.Fatal.Printf("Stat source file failed: %v", err)
+			os.Exit(1)
 		}
 		if info.IsDir() {
 			args.Directory = true
