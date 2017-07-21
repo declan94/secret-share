@@ -10,6 +10,7 @@ import (
 
 	"path/filepath"
 
+	"github.com/declan94/secret-share/internal/exitcode"
 	"github.com/declan94/secret-share/internal/tlog"
 )
 
@@ -45,7 +46,7 @@ func usage() {
 	fmt.Printf("		There must be at least two sharing parts.")
 	fmt.Printf("\noptions:\n")
 	printMyFlagSet(map[string]bool{"debug": true})
-	os.Exit(1)
+	os.Exit(exitcode.Usage)
 }
 
 // ParseArgs parse args from cli args
@@ -78,18 +79,18 @@ func ParseArgs() (args CliArgs) {
 	if args.Recover {
 		if err == nil {
 			tlog.Fatal.Printf("[%s] Already exists. Change another place to recover.\n", args.Src)
-			os.Exit(1)
+			os.Exit(exitcode.DstErr)
 		}
 		if !os.IsNotExist(err) {
 			tlog.Fatal.Printf("Stat error: %v\n", err)
-			os.Exit(1)
+			os.Exit(exitcode.DstErr)
 		}
 		infos := make([]os.FileInfo, len(args.Parts))
 		for i, part := range args.Parts {
 			info, err := os.Stat(part)
 			if err != nil {
 				tlog.Fatal.Printf("stat [%s] failed: %v", part, err)
-				os.Exit(1)
+				os.Exit(exitcode.SrcErr)
 			}
 			if info.IsDir() {
 				args.Directory = true
@@ -99,23 +100,23 @@ func ParseArgs() (args CliArgs) {
 		for _, info := range infos {
 			if info.IsDir() != args.Directory {
 				tlog.Fatal.Printf("Mixed file and directory parts")
-				os.Exit(1)
+				os.Exit(exitcode.Usage)
 			}
 		}
 	} else {
 		if len(args.Parts) > 255 || len(args.Parts) < 2 {
 			tlog.Fatal.Printf("the number of sharing parts should satisfy 2 <= n <= 255.")
-			os.Exit(1)
+			os.Exit(exitcode.Usage)
 		}
 		if args.KNum == 0 {
 			args.KNum = len(args.Parts)
 		} else if args.KNum < 2 || args.KNum > len(args.Parts) {
 			tlog.Fatal.Printf("k should satisfy 2 <= k <= n. (n is the count of total sharing parts)")
-			os.Exit(1)
+			os.Exit(exitcode.Usage)
 		}
 		if err != nil {
 			tlog.Fatal.Printf("Stat source file failed: %v", err)
-			os.Exit(1)
+			os.Exit(exitcode.SrcErr)
 		}
 		if info.IsDir() {
 			args.Directory = true
@@ -124,7 +125,7 @@ func ParseArgs() (args CliArgs) {
 				err := checkDirEmpty(d)
 				if err != nil {
 					tlog.Fatal.Println(err)
-					os.Exit(1)
+					os.Exit(exitcode.DstErr)
 				}
 			}
 		} else {

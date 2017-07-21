@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/declan94/secret-share/internal/exitcode"
 	"github.com/declan94/secret-share/internal/tlog"
 	"github.com/declan94/secret-share/secretshare"
 )
@@ -34,7 +35,7 @@ func main() {
 	}
 	if err != nil {
 		tlog.Fatal.Println(err)
-		os.Exit(3)
+		os.Exit(exitcode.Execution)
 	}
 }
 
